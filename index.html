@@ -6,15 +6,23 @@
     <title>The Book Emporium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-50 font-inter text-gray-800 antialiased">
 
     <div class="container mx-auto p-4 md:p-8 lg:p-12">
 
-        <header class="text-center mb-8 md:mb-12">
+        <header class="text-center mb-8 md:mb-12 relative">
             <h1 class="text-4xl md:text-5xl font-bold text-blue-600 mb-2">The Book Emporium</h1>
             <p class="text-lg text-gray-600">Discover your next favorite read.</p>
+            <div class="absolute top-4 right-4 md:right-8">
+                <button id="cart-icon" class="relative p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors">
+                    <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path>
+                    </svg>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+            </div>
         </header>
 
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -53,6 +61,20 @@
             No products found matching your criteria.
         </div>
 
+    </div>
+
+    <div id="cart-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Your Shopping Cart</h2>
+            <div id="cart-items-display" class="max-h-80 overflow-y-auto">
+                <p class="text-gray-500" id="empty-cart-message">Your cart is empty.</p>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
+                <span class="text-xl font-bold">Total: $<span id="cart-total">0.00</span></span>
+                <button id="close-cart-modal" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400">Close</button>
+                <button id="checkout-button" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 ml-2">Checkout</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
