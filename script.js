@@ -228,6 +228,16 @@ function saveCartToLocalStorage() {
     localStorage.setItem('bookEmporiumCart', JSON.stringify(cart));
 }
 
+// New function to remove an item from the cart
+function removeItemFromCart(productId) {
+    const index = cart.findIndex(item => item.id === productId);
+    if (index > -1) {
+        cart.splice(index, 1); // Remove the item
+        saveCartToLocalStorage();
+        updateCartUI(); // Update the display
+    }
+}
+
 function updateCartUI() {
     cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -243,10 +253,20 @@ function updateCartUI() {
             cartItemDiv.className = "flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0";
             cartItemDiv.innerHTML = `
                 <span>${item.name} (x${item.quantity})</span>
-                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                <div class="flex items-center gap-2">
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                    <button class="remove-item-btn text-red-500 hover:text-red-700 font-bold px-2 py-1 rounded"
+                            data-product-id="${item.id}">X</button>
+                </div>
             `;
             cartItemsDisplay.appendChild(cartItemDiv);
             total += item.price * item.quantity;
+
+            // Add event listener to the remove button
+            cartItemDiv.querySelector('.remove-item-btn').addEventListener('click', (event) => {
+                const productIdToRemove = parseInt(event.target.dataset.productId);
+                removeItemFromCart(productIdToRemove);
+            });
         });
     }
     cartTotalDisplay.textContent = total.toFixed(2);
