@@ -1,6 +1,18 @@
-body {
-    font-family: 'Newsreader', serif; /* Changed from Inter to Newsreader */
+/* Define a custom property for the new background color */
+:root {
+    --primary-background-color: #fcf9f3; /* A warm off-white */
 }
+
+body {
+    font-family: 'Newsreader', serif;
+    background-color: var(--primary-background-color); /* Use the custom property */
+}
+
+/* Ensure Tailwind's default body background class is overridden */
+.bg-primary-background {
+    background-color: var(--primary-background-color) !important;
+}
+
 
 header h1 {
     font-family: 'Dancing Script', cursive;

@@ -119,8 +119,10 @@ function displayProducts(productsToDisplay, searchTerm = '') {
 
         const productCard = document.createElement('div');
         productCard.className = `
-            bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300
-            transform hover:-translate-y-1 border border-gray-100
+            bg-white rounded-xl shadow-lg
+            transform transition-all duration-300 ease-in-out
+            hover:scale-103 hover:shadow-2xl hover:-translate-y-2
+            border border-gray-100
             flex flex-col
         `;
 
@@ -228,13 +230,12 @@ function saveCartToLocalStorage() {
     localStorage.setItem('bookEmporiumCart', JSON.stringify(cart));
 }
 
-// New function to remove an item from the cart
 function removeItemFromCart(productId) {
     const index = cart.findIndex(item => item.id === productId);
     if (index > -1) {
-        cart.splice(index, 1); // Remove the item
+        cart.splice(index, 1);
         saveCartToLocalStorage();
-        updateCartUI(); // Update the display
+        updateCartUI();
     }
 }
 
@@ -262,7 +263,6 @@ function updateCartUI() {
             cartItemsDisplay.appendChild(cartItemDiv);
             total += item.price * item.quantity;
 
-            // Add event listener to the remove button
             cartItemDiv.querySelector('.remove-item-btn').addEventListener('click', (event) => {
                 const productIdToRemove = parseInt(event.target.dataset.productId);
                 removeItemFromCart(productIdToRemove);
