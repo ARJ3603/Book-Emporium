@@ -2,6 +2,8 @@ const products = [
     {
         id: 1,
         name: "The Huskey and his White Cat Shizun",
+        author: "Rou Bao Bu Chi Rou",
+        yearPublished: 2017,
         image: "whitecatshizun.jpg",
         price: 19.99,
         category: "Danmei",
@@ -10,6 +12,8 @@ const products = [
     {
         id: 2,
         name: "No Longer Human",
+        author: "Osamu Dazai",
+        yearPublished: 1948,
         image: "nolongerhuman.jpg",
         price: 14.95,
         category: "Fiction",
@@ -18,14 +22,18 @@ const products = [
     {
         id: 3,
         name: "Fourth Wing",
+        author: "Rebecca Yarros",
+        yearPublished: 2023,
         image: "forthwing.jpg",
         price: 24.99,
         category: "Fantasy",
-        description: "Twenty-year-old Violet Sorrengail was supposed to enter the Scribe Quadrant, living a quiet life among books and history. Now, the commanding general―also known as her tough-as-talons mother―has ordered Violet to join the hundreds of candidates striving to become the elite of Navarre: dragon riders."
+        description: "Twenty-year-old Violet Sorrengail was supposed to enter the Scribe Quadrant, living a quiet life among books and history. Now, the commanding general―also known as her tough-as-talons mother―has ordered Violet to join the hundreds of hundreds of candidates striving to become the elite of Navarre: dragon riders."
     },
     {
         id: 4,
         name: "True Beauty",
+        author: "Yaongyi",
+        yearPublished: 2018,
         image: "truebeauty.jpg",
         price: 19.99,
         category: "Manga",
@@ -34,6 +42,8 @@ const products = [
     {
         id: 5,
         name: "Milk and Honey",
+        author: "Rupi Kaur",
+        yearPublished: 2014,
         image: "milkandhoney.jpg",
         price: 9.99,
         category: "Poetry",
@@ -42,6 +52,8 @@ const products = [
     {
         id: 6,
         name: "Fifty Words for Rain",
+        author: "Asha Lemmie",
+        yearPublished: 2020,
         image: "fiftywords.jpg",
         price: 19.99,
         category: "Fiction",
@@ -50,6 +62,8 @@ const products = [
     {
         id: 7,
         name: "The Girl on the Train",
+        author: "Paula Hawkins",
+        yearPublished: 2015,
         image: "girlonthetrain.jpg",
         price: 24.99,
         category: "Thriller",
@@ -58,6 +72,8 @@ const products = [
     {
         id: 8,
         name: "A Court of Thrones and Roses",
+        author: "Sarah J. Maas",
+        yearPublished: 2015,
         image: "ACOTAR.jpg",
         price: 22.99,
         category: "Fantasy",
@@ -66,6 +82,8 @@ const products = [
     {
         id: 9,
         name: "Fahrenheit 451",
+        author: "Ray Bradbury",
+        yearPublished: 1953,
         image: "f451.jpg",
         price: 22.99,
         category: "Science Fiction",
@@ -74,6 +92,8 @@ const products = [
     {
         id: 10,
         name: "The Seven Deaths of Evelyn Hardcastle",
+        author: "Stuart Turton",
+        yearPublished: 2018,
         image: "sevendeaths.jpg",
         price: 16.99,
         category: "Mystery",
@@ -95,9 +115,18 @@ const cartItemsDisplay = document.getElementById('cart-items-display');
 const emptyCartMessage = document.getElementById('empty-cart-message');
 const cartTotalDisplay = document.getElementById('cart-total');
 
+const bookDetailModal = document.getElementById('book-detail-modal');
+const closeBookDetailButton = document.getElementById('close-book-detail');
+const detailBookImage = document.getElementById('detail-book-image');
+const detailBookName = document.getElementById('detail-book-name');
+const detailBookAuthor = document.getElementById('detail-book-author');
+const detailBookGenre = document.getElementById('detail-book-genre');
+const detailBookYear = document.getElementById('detail-book-year');
+const detailBookDescription = document.getElementById('detail-book-description');
+const detailAddToCartBtn = document.getElementById('detail-add-to-cart-btn');
+
+
 let cart = JSON.parse(localStorage.getItem('bookEmporiumCart')) || [];
-
-
 let currentProducts = [...products];
 
 function displayProducts(productsToDisplay, searchTerm = '') {
@@ -123,8 +152,9 @@ function displayProducts(productsToDisplay, searchTerm = '') {
             transform transition-all duration-300 ease-in-out
             hover:scale-103 hover:shadow-2xl hover:-translate-y-2
             border border-gray-100
-            flex flex-col
+            flex flex-col cursor-pointer
         `;
+        productCard.dataset.productId = product.id;
 
         productCard.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.onerror=null;this.src='placeholder.jpg';">
@@ -145,6 +175,7 @@ function displayProducts(productsToDisplay, searchTerm = '') {
         productListDiv.appendChild(productCard);
 
         productCard.querySelector('.add-to-cart-btn').addEventListener('click', (event) => {
+            event.stopPropagation();
             const productId = parseInt(event.target.dataset.productId);
             const productToAdd = products.find(p => p.id === productId);
             if (productToAdd) {
@@ -161,6 +192,13 @@ function displayProducts(productsToDisplay, searchTerm = '') {
                 setTimeout(() => event.target.textContent = 'Add to Cart', 1000);
             }
         });
+
+        productCard.addEventListener('click', (event) => {
+            if (!event.target.classList.contains('add-to-cart-btn')) {
+                const productId = parseInt(event.currentTarget.dataset.productId);
+                openBookDetail(productId);
+            }
+        });
     });
 }
 
@@ -169,7 +207,8 @@ function filterProducts() {
     const selectedCategory = categoryFilter.value;
 
     let filtered = products.filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm) ||
+                             product.author.toLowerCase().includes(searchTerm);
         const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
@@ -272,6 +311,29 @@ function updateCartUI() {
     cartTotalDisplay.textContent = total.toFixed(2);
 }
 
+function openBookDetail(productId) {
+    const book = products.find(p => p.id === productId);
+    if (book) {
+        detailBookImage.src = book.image;
+        detailBookImage.alt = book.name;
+        detailBookName.textContent = book.name;
+        detailBookAuthor.textContent = book.author;
+        detailBookGenre.textContent = book.category;
+        detailBookYear.textContent = book.yearPublished;
+        detailBookDescription.textContent = book.description;
+        
+        detailAddToCartBtn.dataset.productId = book.id;
+        detailAddToCartBtn.textContent = 'Add to Cart';
+        
+        bookDetailModal.classList.remove('translate-x-full');
+        bookDetailModal.classList.add('fixed');
+    }
+}
+
+function closeBookDetail() {
+    bookDetailModal.classList.add('translate-x-full');
+}
+
 cartIcon.addEventListener('click', () => {
     cartModal.classList.remove('hidden');
     updateCartUI();
@@ -284,6 +346,26 @@ closeCartModalButton.addEventListener('click', () => {
 cartModal.addEventListener('click', (event) => {
     if (event.target === cartModal) {
         cartModal.classList.add('hidden');
+    }
+});
+
+closeBookDetailButton.addEventListener('click', closeBookDetail);
+
+detailAddToCartBtn.addEventListener('click', (event) => {
+    const productId = parseInt(event.target.dataset.productId);
+    const productToAdd = products.find(p => p.id === productId);
+    if (productToAdd) {
+        const existingItem = cart.find(item => item.id === productId);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({ ...productToAdd, quantity: 1 });
+        }
+        saveCartToLocalStorage();
+        updateCartUI();
+        
+        event.target.textContent = 'Added!';
+        setTimeout(() => event.target.textContent = 'Add to Cart', 1000);
     }
 });
 

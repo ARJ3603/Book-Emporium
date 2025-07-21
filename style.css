@@ -1,14 +1,12 @@
-/* Define a custom property for the new background color */
 :root {
-    --primary-background-color: #fcf9f3; /* A warm off-white */
+    --primary-background-color: #fcf9f3;
 }
 
 body {
     font-family: 'Newsreader', serif;
-    background-color: var(--primary-background-color); /* Use the custom property */
+    background-color: var(--primary-background-color);
 }
 
-/* Ensure Tailwind's default body background class is overridden */
 .bg-primary-background {
     background-color: var(--primary-background-color) !important;
 }
